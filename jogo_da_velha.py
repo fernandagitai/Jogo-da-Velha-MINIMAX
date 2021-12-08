@@ -1,4 +1,5 @@
 import math
+import copy
 
 x = "X"
 o = "O"
@@ -11,41 +12,51 @@ def estado_inicial():
 
 def eh_estado_final(tabuleiro_atual):
     no_marcados = 0
-    if tabuleiro_atual is None:
-        return False
 
-    if tabuleiro_atual == estado_inicial():
-        return False
+    for i in range(3):
+        for j in range(3):
+            if tabuleiro_atual[i][j]:
+                no_marcados = no_marcados + 1
+    
+    if no_marcados == 9:
+        return True
+
     # LINHAS
     for i in range(3):
         if tabuleiro_atual[i][0] == tabuleiro_atual[i][1] and tabuleiro_atual[i][0] == tabuleiro_atual[i][2]:
-            return True
-        for j in range(3):
-            no_marcados += 1
-
-    
-    # TABULEIRO CHEIO
-    if no_marcados == 9:
-        return True
+            if tabuleiro_atual[i][0] is None:
+                return False
+            else: return True
 
     # COLUNAS
     for i in range(3):
         if tabuleiro_atual[0][i] == tabuleiro_atual[1][i] and tabuleiro_atual[0][i] == tabuleiro_atual[2][i]:
-            return True
+            if tabuleiro_atual[0][i] is None:
+                return False
+            else: return True
     
     
     # DIAGONAL            
     if tabuleiro_atual[0][0] == tabuleiro_atual[1][1] and tabuleiro_atual[0][0] == tabuleiro_atual[2][2]:
-        return True
+        if tabuleiro_atual[0][0] is None:
+            return False
+        else: return True
     elif tabuleiro_atual[0][2] == tabuleiro_atual[1][1] and tabuleiro_atual[0][2] == tabuleiro_atual[2][0]:
-        return True
-
-    elif no_marcados == 9:
-        return True
+        if tabuleiro_atual[0][2] is None:
+            return False
+        else: return True
 
     return False
 
-def printar_tabuleiro(tabuleiro_atual):
+def printar_tabuleiro(tabuleiro):
+    tabuleiro_atual = copy.deepcopy(tabuleiro)
+    contador = 0
+    for i in range(3):
+        for j in range(3):
+            if tabuleiro_atual[i][j] is None:
+                tabuleiro_atual[i][j] = contador
+            contador += 1
+
     tabuleiro = '''
                  |         |         
             {}    |    {}    |    {}    
@@ -102,7 +113,6 @@ def proximo_jogador(tabuleiro):
         return o
     else: return x
                 
-
 def utilidade(estado_atual):
     if not vencedor(estado_atual):
         return 0
@@ -120,16 +130,21 @@ def valor_max(estado_atual):
     v = -math.inf
 
     for jogada in jogadas_possiveis(estado_atual):
-        v = max(v, valor_max(estado_atual[jogada[0]][jogada[1]]))
+        tabuleiro_aux = copy.deepcopy(estado_atual)
+        tabuleiro_aux[jogada[0]][jogada[1]] = proximo_jogador(tabuleiro_aux)
+        v = max(v, valor_max(tabuleiro_aux))
 
     return v 
 
 def valor_min(estado_atual):
     if eh_estado_final(estado_atual):
         return utilidade(estado_atual)
+    
     v = math.inf
     for jogada in jogadas_possiveis(estado_atual):
-        v = min(v, valor_max(estado_atual[jogada[0]][jogada[1]]))
+        tabuleiro_aux = copy.deepcopy(estado_atual)
+        tabuleiro_aux[jogada[0]][jogada[1]] = proximo_jogador(tabuleiro_aux)
+        v = min(v, valor_max(tabuleiro_aux))
     return v    
 
 def minimax(tabuleiro):
@@ -139,7 +154,11 @@ def minimax(tabuleiro):
         v = -math.inf
 
         for jogada in jogadas_possiveis(tabuleiro):
-            v_aux = valor_min(tabuleiro[jogada[0]][jogada[1]])    #FIXED
+            tabuleiro_aux = copy.deepcopy(tabuleiro)
+            tabuleiro_aux[jogada[0]][jogada[1]] = proximo_jogador(tabuleiro_aux)
+
+            v_aux = valor_min(tabuleiro_aux)
+
             if v_aux > v:
                 v = v_aux
                 melhor_jogada = jogada
@@ -147,7 +166,11 @@ def minimax(tabuleiro):
         v = math.inf
 
         for jogada in jogadas_possiveis(tabuleiro):
-            v_aux = valor_max(tabuleiro[jogada[0]][jogada[1]])
+            tabuleiro_aux = copy.deepcopy(tabuleiro)
+            tabuleiro_aux[jogada[0]][jogada[1]] = proximo_jogador(tabuleiro_aux)
+
+            v_aux = valor_max(tabuleiro_aux)
+
             if v_aux < v:
                 v = v_aux
                 melhor_jogada = jogada
@@ -196,12 +219,26 @@ def entrada_de_jogada(tabuleiro):
         print("Entrada invalida")
         return entrada_de_jogada(tabuleiro)
 
-jogo = estado_inicial()
-
-while not eh_estado_final(jogo):
+def main():
+        
+    jogo = estado_inicial()
     jogada_pc = minimax(jogo)
     jogo[jogada_pc[0]][jogada_pc[1]] = x
     printar_tabuleiro(jogo)
-    
-    jogo = entrada_de_jogada(jogo)
 
+    while not eh_estado_final(jogo):
+        jogo = entrada_de_jogada(jogo)
+
+        jogada_pc = minimax(jogo)
+        jogo[jogada_pc[0]][jogada_pc[1]] = x
+        printar_tabuleiro(jogo)
+        
+    printar_tabuleiro(jogo)
+    if vencedor(jogo) is None:
+        print("EMPATE")
+    else:
+        print("{} FOI O VENCEDOR".format(vencedor(jogo)))
+
+
+if __name__ == "__main__":
+    main()
