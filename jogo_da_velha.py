@@ -180,38 +180,73 @@ def minimax(tabuleiro):
 def entrada_de_jogada(tabuleiro):
     jogada_humano = int(input("Digite sua jogada:"))
     if jogada_humano == 0:
+        if tabuleiro[0][0] is not None:
+            print("Entrada invalida")
+            return entrada_de_jogada(tabuleiro)
+
         tabuleiro[0][0] = o
         return tabuleiro
-
     elif jogada_humano == 1:
+        if tabuleiro[0][1] is not None:
+            print("Entrada invalida")
+            return entrada_de_jogada(tabuleiro)
+
         tabuleiro[0][1] = o
         return tabuleiro
 
     elif jogada_humano == 2:
+        if tabuleiro[0][2] is not None:
+            print("Entrada invalida")
+            return entrada_de_jogada(tabuleiro)
+
         tabuleiro[0][2] = o
         return tabuleiro
 
     elif jogada_humano == 3:
+        if tabuleiro[1][0] is not None:
+            print("Entrada invalida")
+            return entrada_de_jogada(tabuleiro)
+
         tabuleiro[1][0] = o
         return tabuleiro
 
     elif jogada_humano == 4:
+        if tabuleiro[1][1] is not None:
+            print("Entrada invalida")
+            return entrada_de_jogada(tabuleiro)
+
         tabuleiro[1][1] = o
         return tabuleiro
 
     elif jogada_humano == 5:
+        if tabuleiro[1][2] is not None:
+            print("Entrada invalida")
+            return entrada_de_jogada(tabuleiro)
+
         tabuleiro[1][2] = o
         return tabuleiro
 
     elif jogada_humano == 6:
+        if tabuleiro[2][0] is not None:
+            print("Entrada invalida")
+            return entrada_de_jogada(tabuleiro)
+
         tabuleiro[2][0] = o
         return tabuleiro
 
     elif jogada_humano == 7:
+        if tabuleiro[2][1] is not None:
+            print("Entrada invalida")
+            return entrada_de_jogada(tabuleiro)
+
         tabuleiro[2][1] = o
         return tabuleiro
 
     elif jogada_humano == 8:
+        if tabuleiro[2][2] is not None:
+            print("Entrada invalida")
+            return entrada_de_jogada(tabuleiro)
+
         tabuleiro[2][2] = o
         return tabuleiro
 
